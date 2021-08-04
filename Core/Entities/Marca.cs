@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Core.Entities
 {
-    public class Marca : BaseClass
+    public class Marca : ClaseBase
     {
         public string Nombre { get; set; }
     }
