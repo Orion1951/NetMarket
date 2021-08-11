@@ -32,7 +32,11 @@ namespace WebApi.Controllers
         public async Task<ActionResult<Producto>> GetProducto(int id)
         {
             var spec = new ProductoWithCategoriasAndMarcaSpecification(id);
-            return await _productoRepository.GetByIdWithSpec(spec);
+            var producto = await _productoRepository.GetByIdWithSpec(spec);
+         if (producto == null)
+	{  
+            return NotFound(new CodeResponse(404));
+	}
         }
     }
 }
