@@ -24,9 +24,9 @@ namespace WebApi.Controllers
          _mapper = mapper;
       }
         [HttpGet]
-        public async Task<ActionResult<List<Producto>>> GetProductos()
+        public async Task<ActionResult<List<Producto>>> GetProductos(string sort)
         {
-            var spec = new ProductoWithCategoriasAndMarcaSpecification();
+            var spec = new ProductoWithCategoriasAndMarcaSpecification(sort);
             var productos = await _productoRepository.GetAllWithSpec(spec);
             return Ok(productos);
         }
