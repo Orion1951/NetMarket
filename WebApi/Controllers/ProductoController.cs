@@ -24,11 +24,23 @@ namespace WebApi.Controllers
          _mapper = mapper;
       }
         [HttpGet]
-        public async Task<ActionResult<List<Producto>>> GetProductos(string sort)
+        public async Task<ActionResult<Pagination<ProductoDTO>>> GetProductos([FromQuery]ProductoSpecificationParams productoParams)
         {
-            var spec = new ProductoWithCategoriasAndMarcaSpecification(sort);
+            var spec = new ProductoWithCategoriasAndMarcaSpecification(productoParams);
             var productos = await _productoRepository.GetAllWithSpec(spec);
-            return Ok(productos);
+            var specCount = new ProductoForCountingSpecification(productoParams);
+            var totalProductos = await _productoRepository.CountAsync(specCount);
+            var rounded = Math.Ceiling( Convert.ToDecimal (totalProductos / productoParams.PageSize));
+            var totalPages = Convert.ToInt32(rounded);
+            var data = _mapper.Map<IReadOnlyList<Producto>, IReadOnlyList<ProductoDTO>>(productos);
+            return Ok( new Pagination<ProductoDTO>
+            {
+                Count = totalProductos,
+                Data = data,
+                PageCount = totalPages,
+                PageIndex = productoParams.PageIndex,
+                PageSize = productoParams.PageSize
+            });
         }
 
         [HttpGet("{id}")]
